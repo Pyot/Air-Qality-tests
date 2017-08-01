@@ -1,0 +1,156 @@
+html *
+{
+   
+   color: white !important;
+   font-family: 'Oswald', sans-serif;
+}
+
+body {
+    
+    color:white;
+    display: table;
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background: url("http://ongo.biz/photo/city-scott-webb1.jpg") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+    margin-bottom: 0px;
+    box-shadow: inset 1000px 0 0 1000px rgba(0,0,0,.4);
+    
+
+    }
+
+canvas {
+    position: relative;
+    z-index: -1;
+}
+
+#searchDiv {
+    position: relative;
+    z-index: 110;
+}
+
+#pm10 {
+    z-index: 111;
+}
+
+.vertical-center .container .col-md-12 h1 {
+    font-size: 60px;
+ font-family: 'Contrail One', sans-serif;
+    opacity: 0.9;
+     position: relative;
+    margin-bottom: 30px;
+    
+}
+
+#title-container{
+   margin-bottom: 40px;
+}
+
+h2 {
+    
+ font-family: 'Oswald', sans-serif;
+    opacity: 0.7;
+}
+
+.circle {
+    font-family: 'Roboto', sans-serif;
+  position: relative;
+  display: inline-block;
+    margin: 20px;
+    z-index: -1;
+        
+}
+
+.circle > strong {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100px;
+  height: 40px;
+  margin-left: -50px;
+  margin-top: -20px;
+  text-align: center;
+  font-size: 30px;
+}
+
+.vertical-center {
+  min-height: 100vh;  /* Fallback for browsers do NOT support vh unit */
+  
+
+  display: flex;
+  align-items: center;
+}
+
+.noData {
+    position: relative;
+    border: 30px solid rgba(255, 255, 255, .5);
+    border-radius: 50%;
+    height: 150px;
+    width: 150px;
+    margin: 20px;
+    display: table;
+    margin: 20px auto; 
+    margin-top: 30px;
+    opacity: 0.3;
+}
+
+.noData p {
+    font-size: 23px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+    
+}
+
+.visible {
+  display: block;  
+}
+
+.invisible {
+    
+display:none;
+}
+
+.btn-submit {
+  cursor: pointer;
+  margin: 3px;
+    margin-top: 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  padding: 7px;
+  font-size: 20px;
+    width: 300px;
+  transition: .3s;
+  -webkit-transition: .3s;
+  -moz-transition: .3s;
+  -o-transition: .3s;
+  display: inline-block;
+}
+
+.btn-submit:hover {
+  cursor: url(http://cur.cursors-4u.net/symbols/sym-1/sym46.cur), auto;
+}
+.white {
+  color: white;
+  border: 2px white solid;
+}
+
+.white:hover {
+  background-color: white;
+  color: transparent
+}
+
+.center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+}
+
+

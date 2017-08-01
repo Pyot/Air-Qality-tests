@@ -1,0 +1,286 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Oswald|Roboto" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Anton|Audiowide|Bangers|Contrail+One|Fugaz+One" rel="stylesheet">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/chosen.css">
+    <link rel="stylesheet" href="css/prism.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="js/circle-progress.js"></script>
+    <script src="js/prism.js"></script>
+    <script src="js/chosen.jquery.js"></script>
+    
+    
+    <script>
+        $(document).ready(function () {
+            var town = "";
+
+            function townSubmit() {
+                var e = document.getElementById("townSelect");
+                var strUser = e.options[e.selectedIndex].value;
+                return (strUser);
+            }
+
+            function afterStart() {
+                var title = document.getElementById("title");
+                var searchDiv = document.getElementById("searchDiv");
+                var Tag = document.getElementsByTagName("h2");
+                var circleClass = document.getElementsByClassName("col-md-4");
+                function creatingCircle () {
+                    for (i = 0; i < Tag.length; i++) {
+                        circleClass[i].classList.add("animated", "fadeIn");
+                        Tag[i].classList.remove("invisible");
+                        Tag[i].classList.add("animated", "fadeIn");
+                };
+                }
+                function fadeOutTitle () {
+                   title.classList.add("animated", "fadeOut");
+                    searchDiv.classList.add("animated", "fadeOut"); 
+                }    
+                
+                function fadeInTitle () {
+                    title.classList.remove("center");
+                    title.classList.remove("fadeOut");
+                    searchDiv.classList.remove("center");
+                    searchDiv.classList.remove("fadeOut");
+                    title.classList.add("fadeIn");
+                    searchDiv.classList.add("fadeIn");
+                }
+                $.when(setTimeout(function () {
+                    fadeOutTitle();
+                    
+                }, 0)).done(setTimeout(function () {
+                    creatingCircle();
+                }, 2000)).done(setTimeout(function () {
+                    fadeInTitle();
+                }, 3000));
+            }
+            $("#townSelect").chosen({
+                width: "300px"
+            })
+            $("#townSelect").chosen({
+                no_results_text: "Brak danych..."
+            });
+            $("#townSelect").on("click change", function () {
+                townSubmit();
+                starAgain();
+                afterStart();
+            });
+
+            function starAgain() {
+                var town = townSubmit();
+                var url = 'https://api.waqi.info/feed/' + town + '/?token=4e9a9b9811fab51ec451adc577b177e3fef457b1';
+               
+                    
+            
+                $.getJSON(url, function (pollution) {
+                    
+                    
+                   
+                    
+                    
+                    //========== Nie przekraczej tej lini
+                    //data variable from api
+                    //if ((pollution.data.iaqi.pm10.v)=undefined){pm25=0}else{pm25=(pollution.data.iaqi.pm25.v)};
+                    var pm25barmaxPrzelicznik = 100 / 71;
+                    var pm25criteria = [[35, 'green']
+                                    , [53, 'orange']
+                                    , [71, 'red']];
+                    //pm10 needed
+                    var pm10barmaxPrzelicznik = 100 / 101;
+                    var pm10criteria = [[40, 'green']
+                                    , [75, 'orange']
+                                    , [101, 'red']];
+                    //no2 Nitrogen Dioxide Dwutelentk Azotu
+                    var no2barmaxPrzelicznik = 100 / 601;
+                    var no2criteria = [[200, 'green']
+                                    , [400, 'orange']
+                                    , [601, 'red']];
+                    //so2 Sulfur Dioxide/Dwutlenek Siarki
+                    var so2barmaxPrzelicznik = 100 / 1065;
+                    var so2criteria = [[266, 'green']
+                                    , [532, 'orange']
+                                    , [1065, 'red']];
+                    //o3 Ozone/Ozone 
+                    var o3barmaxPrzelicznik = 100 / 241;
+                    var o3criteria = [[100, 'green']
+                                    , [160, 'orange']
+                                    , [241, 'red']];
+                    // check the value of pollution object
+                    function egzaminObjProp(pollVallName) {
+                        var testProp = (pollution.data.iaqi).hasOwnProperty(pollVallName);
+                        if (testProp === false) {
+                            return ('Nan');
+                        }
+                        else {
+                            return (pollution.data.iaqi[pollVallName].v)
+                        };
+                    }
+                    // określenie promienia koła
+                    function definitionCircle(pollValue, pollPrzelicznik) {
+                        var valueBar = 0;
+                        if (pollValue >= 100) {
+                            valueBar = 1;
+                        }
+                        else {
+                            //pm25valueBar
+                            valueBar = (pollValue * pollPrzelicznik) / 100;
+                        };
+                        return (valueBar)
+                    }
+                    //Selection color of the bar by comparing pollutin valute to criteria value
+                    function colorBarSelection(pollValue, pollCriteria) {
+                        var colorBar = 0;
+                        if (pollValue <= pollCriteria[0][0]) {
+                            colorBar = pollCriteria[0][1]
+                        }
+                        else if (pollValue <= pollCriteria[1][0]) {
+                            colorBar = pollCriteria[1][1]
+                        }
+                        else {
+                            colorBar = pollCriteria[2][1]
+                        };
+                        //pm25colorBar
+                        return (colorBar);
+                    }
+
+                   
+                    
+                    function creatCircle(pollbarmaxPrzelicznik, pollValue, pollcolorBar, divID) {
+                        var divIDhash = "#" + divID;
+                        $(divIDhash).circleProgress({
+                            value: pollValue
+                            , fill: {
+                                color: pollcolorBar
+                            }
+                        }).on('circle-animation-progress', function (event, progress, stepValue) {
+                            $(this).children('strong').text(
+                                (stepValue / pollbarmaxPrzelicznik * 100).toFixed(0));
+                        });
+                    }
+
+                    function checkJSONnan(pollValue, divPoll, divNoData, barmaxPrzelicznik, valueBar, colorBar) {
+                        if (pollValue == 'Nan') {
+                            setTimeout(function(){
+                                
+                             document.getElementById(divPoll).classList.add("invisible");
+                                document.getElementById(divNoData).classList.add("animated", "fadeIn");
+                            document.getElementById(divNoData).classList.remove("invisible");   
+                            },2000)
+                            
+                        }
+                        else {
+                           
+                             setTimeout(function () {
+                                  document.getElementById(divPoll).classList.remove("invisible");
+                            document.getElementById(divNoData).classList.add("invisible");
+                  creatCircle(barmaxPrzelicznik, valueBar, colorBar, divPoll);  
+                }, 2000)
+                            
+                        };
+                    }
+                    //Execution area
+                    var pm25 = egzaminObjProp("pm25");
+                    var pm25valueBar = definitionCircle(pm25, pm25barmaxPrzelicznik);
+                    var pm25colorBar = colorBarSelection(pm25, pm25criteria);
+                    checkJSONnan(pm25, "pm25", "pm25noData", pm25barmaxPrzelicznik, pm25valueBar, pm25colorBar);
+                    
+                    var pm10 = egzaminObjProp("pm10");
+                    var pm10valueBar = definitionCircle(pm10, pm10barmaxPrzelicznik);
+                    var pm10colorBar = colorBarSelection(pm10, pm10criteria);
+                    checkJSONnan(pm10, "pm10", "pm10noData", pm10barmaxPrzelicznik, pm10valueBar, pm10colorBar);
+                    
+                    var no2 = egzaminObjProp("no2");
+                    var no2valueBar = definitionCircle(no2, no2barmaxPrzelicznik);
+                    var no2colorBar = colorBarSelection(no2, no2criteria);
+                    checkJSONnan(no2, "no2", "no2noData", no2barmaxPrzelicznik, no2valueBar, no2colorBar);
+                    
+                    var so2 = egzaminObjProp("so2");
+                    var so2valueBar = definitionCircle(so2, so2barmaxPrzelicznik);
+                    var so2colorBar = colorBarSelection(so2, so2criteria);
+                    checkJSONnan(so2, "so2", "so2noData", so2barmaxPrzelicznik, so2valueBar, so2colorBar);
+                   
+                    var o3 = egzaminObjProp("o3");
+                    var o3valueBar = definitionCircle(o3, o3barmaxPrzelicznik);
+                    var o3colorBar = colorBarSelection(o3, o3criteria);
+                    checkJSONnan(o3, "o3", "o3noData", o3barmaxPrzelicznik, o3valueBar, o3colorBar);
+                })
+            }
+        })
+    </script>
+</head>
+
+<body class="vertical-center">
+    <div class="container">
+        <div id="title-container" class="row text-center">
+            <div class="col-md-12">
+                <h1 id="title">Air Quality</h1>
+                    <div id="searchDiv" class="center col-md-12 text-center">
+                    <select data-placeholder="Select Town" name="townSelect" class="chosen-select" data-display="select" id="townSelect">
+                        <option value=""></option>
+                        <option value="@5771">Amsterdam</option>
+                        <option value="@6132">Berlin</option>
+                        <option value="@5765">Brussels</option>
+                        <option value="@5724">London</option>
+                        <option value="@5725">Madrid</option>
+                        <option value="@2647">Oslo</option>
+                        <option value="@5722">Paris</option>
+                        <option value="@9352">Roma</option>
+                        <option value="shanghai">Shanghai</option>
+                        <option value="@3399">Warsaw</option>
+                    </select>
+                </div>
+            </div>
+            </div>
+        
+        <div class="row  text-center">
+            <div class="col-md-4 col-xs-12 text-center">
+                <h2 class="invisible">pm2.5</h2>
+                <div id="pm25" class="circle"> <strong></strong> </div>
+                <div id="pm25noData" class="noData invisible text-center">
+                    <p class="text-center">No Data</p>
+                </div>
+            </div>
+            <div class="col-md-4 col-xs-12 text-center">
+                <h2 class="invisible">pm10</h2>
+                <div id="pm10" class="circle"> <strong></strong> </div>
+                <div id="pm10noData" class="noData invisible text-center">
+                    <p class="text-center">No Data</p>
+                </div>
+            </div>
+            <div class="col-md-4 col-xs-12 text-center">
+                <h2 class="invisible">NO2</h2>
+                <div id="no2" class="circle"> <strong></strong> </div>
+                <div id="no2noData" class="noData invisible text-center">
+                    <p class="text-center">No Data</p>
+                </div>
+            </div>
+        </div>
+        <div class="row text-center">
+            <div class="col-md-offset-2 col-md-4 col-xs-12 text-center">
+                <h2 class="invisible">SO2</h2>
+                <div id="so2" class="circle"> <strong></strong> </div>
+                <div id="so2noData" class="noData invisible text-center">
+                    <p class="text-center">No Data</p>
+                </div>
+            </div>
+            <div class="col-md-4 col-xs-12 text-center">
+                <h2 class="invisible">O3</h2>
+                <div id="o3" class="circle"> <strong></strong> </div>
+                <div id="o3noData" class="noData invisible text-center">
+                    <p class="text-center">No Data</p>
+                </div>
+            </div>
+         
+        </div>
+</body>
+
+</html>
