@@ -1,4 +1,4 @@
-# Website Template 
+# Air Pollution Website
 
 My first website where I use Javascript and extrenal API.
 I do not refactor this project even though is not the best. I made after 3 days of playing with Javascript. I was more focused, to make it work, not how the code should look.
